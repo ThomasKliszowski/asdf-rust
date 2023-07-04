@@ -44,7 +44,20 @@ install_rust() {
     *) fail "Unsupported architecture" ;;
   esac
 
-  local download_url="https://static.rust-lang.org/dist/rust-${version}-${architecture}-${platform}.tar.gz"
+  local download_url
+
+  case "$version" in
+    nightly*)
+      local nightly_version=$(echo "$version" | sed -e 's/nightly-//')
+      download_url="https://static.rust-lang.org/dist/${nightly_version}/rust-nightly-${architecture}-${platform}.tar.gz"
+    ;;
+    *) download_url="https://static.rust-lang.org/dist/rust-${version}-${architecture}-${platform}.tar.gz" ;;
+  esac
+
+  echo "------"
+  echo $download_url
+  echo "------"
+
   local tmp_download_dir
   tmp_download_dir=$(mktemp -d -t rust_tmp_XXXXXX)
   local source_path="${tmp_download_dir}/rust.tar.gz"
